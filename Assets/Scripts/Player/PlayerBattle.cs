@@ -33,7 +33,8 @@ public class PlayerBattle : MonoBehaviour
             EntityHealth hp = target.GetComponent<EntityHealth>();
             if (hp != null)
             {
-                hp.GetDamage(stat.GetResultValue("attackDamage"), health);
+                //hp.GetDamage(stat.GetResultValue("attackDamage"), health);
+                hp.GetDamage(3, health);
             }
         }
     }
