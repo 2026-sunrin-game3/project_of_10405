@@ -3,15 +3,18 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D rigid;
-    public float moveSpeed = 3f, jumpPower = 12f;
+    EntityStat stat;
+    public float jumpPower = 12f;
     [SerializeField] LayerMask groundMask_;
     [SerializeField] float groundDist_ = 0.5f;
 
     void Awake() {
         rigid = GetComponent<Rigidbody2D>();
+        stat = GetComponent<EntityStat>();
     }
 
     public void Move(Vector2 axis) {
+        float moveSpeed = stat.GetResultValue("moveSpeed");
         transform.Translate(axis.normalized * moveSpeed * Time.deltaTime);
     }
 
@@ -34,6 +37,6 @@ public class PlayerMovement : MonoBehaviour
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawCube(transform.position + Vector3.down * groundDist_ * 0.5f, new Vector3(0.3f, groundDist_));        
+        Gizmos.DrawCube(transform.position + Vector3.down * groundDist_ * 0.5f, new Vector3(0.3f, groundDist_));
     }
 }

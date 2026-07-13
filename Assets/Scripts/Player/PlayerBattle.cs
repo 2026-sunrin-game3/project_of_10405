@@ -2,16 +2,19 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
+[Serializable]
+public struct AttackRange
+{
+    public Vector2 offset, size;
+    public bool drawGizmos;
+}
+
 public class PlayerBattle : MonoBehaviour
 {
     public EntityHealth health;
     public EntityStat stat;
-    [Serializable]
-    public struct AttackRange
-    {
-        public Vector2 offset, size;
-        public bool drawGizmos;
-    }
+    public float atkCool;
+
     public AttackRange defaultAttack;
     [SerializeField] LayerMask enemyMask;
     void Start()
@@ -20,8 +23,20 @@ public class PlayerBattle : MonoBehaviour
         stat = GetComponent<EntityStat>();
     }
 
+    void Update()
+    {
+        if (atkCool > 0)
+        {
+            atkCool -= Time.deltaTime * (1 + stat.GetResultValue("atkSpeed") / 100);
+        }
+    }
+
     public void Attack()
     {
+        if (atkCool > 0)
+            return;
+        atkCool = 0.5f;
+
         var col = Physics2D.OverlapBoxAll((Vector2)transform.position + defaultAttack.offset,
             defaultAttack.size,
             0,
@@ -33,8 +48,7 @@ public class PlayerBattle : MonoBehaviour
             EntityHealth hp = target.GetComponent<EntityHealth>();
             if (hp != null)
             {
-                //hp.GetDamage(stat.GetResultValue("attackDamage"), health);
-                hp.GetDamage(3, health);
+                hp.GetDamage(stat.GetResultValue("attackDamage"), health);
             }
         }
     }

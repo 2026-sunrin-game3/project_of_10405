@@ -25,7 +25,7 @@ public class EntityStat : MonoBehaviour
         public MathType mathtype;
         public float Value;       
     }
-
+    [Serializable]
     public struct StatValue
     {
         public string Key;
@@ -43,8 +43,6 @@ public class EntityStat : MonoBehaviour
         new StatValue{Key="atkSpeed", Value=0},
         new StatValue{Key="moveSpeed", Value=0}
     };
-    public float attackDamage, defense, increaseDamage;
-    public float critPer, critMul, hurtDamage, atkSpeed, moveSpeed;
     void Start()
     {
         foreach (StatValue val in defaultStat)
@@ -61,7 +59,7 @@ public class EntityStat : MonoBehaviour
     public float Calc(string key)
     {
         float value = baseValue[key];
-        float increase = 1;
+        float increase = 100;
 
         foreach (Buf buf in bufs)
         {
