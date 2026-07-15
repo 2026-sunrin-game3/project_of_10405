@@ -1,37 +1,44 @@
 using System;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 public class EntityHealth : MonoBehaviour
 {
     EntityStat stat;
-    public float health, MaxHealth;
+    
+    public float health, maxHealth;
+
     public bool isDeath;
 
     public struct Context
     {
         public float damage;
+
         public EntityHealth attacker;
+
         public bool canceled;
     }
-
     List<Action<Context>> onDamageEv = new();
+
     List<Action<Context>> onGiveDamageEv = new();
     List<Action<Context>> onDeathEv = new();
-    public void ResetHealth()
+
+    public void ResetHealth() 
     {
-        health = MaxHealth;
+        health = maxHealth;
     }
-    public void OnDamage(Action<Context> action)
+
+    public void OnDamage(Action<Context> action) 
     {
         onDamageEv.Add(action);
     }
-    public void OnGiveDamage(Action<Context> action)
+
+    public void OnGiveDamage(Action<Context> action) 
     {
         onGiveDamageEv.Add(action);
     }
-    public void OnDeath(Action<Context> action)
+
+    public void OnDeath(Action<Context> action) 
     {
         onDeathEv.Add(action);
     }
@@ -44,7 +51,6 @@ public class EntityHealth : MonoBehaviour
     {
         if (isDeath)
             return;
-
         Context ctx = new Context();
         ctx.damage = damage;
         ctx.attacker = attacker;
@@ -61,7 +67,6 @@ public class EntityHealth : MonoBehaviour
             critPer = attacker.stat.GetResultValue("critPer");
             critMul = attacker.stat.GetResultValue("critMul");
             inc = attacker.stat.GetResultValue("increaseDamage");
-
             foreach (var c in attacker.onGiveDamageEv)
             {
                 c.Invoke(ctx);
@@ -73,27 +78,26 @@ public class EntityHealth : MonoBehaviour
             return;
         }
 
-        float dmg = ctx.damage * (1 + stat.GetResultValue("hurtDamage")/100) * (1 + inc/100);
+        float dmg = ctx.damage * (1 + stat.GetResultValue("hurtDamage")/100) * (1+ inc/100);
 
         if (UnityEngine.Random.Range(0, 100) <= critPer)
-            dmg *= 1 + critMul/100;
-
+            dmg *= 1 + critMul / 100;
         dmg -= stat.GetResultValue("defense");
-
-        if(dmg < 0)
-        {
+        if (dmg < 0)
             dmg = 0;
-        }
         health -= dmg;
 
-        if(health <= 0)
+        if (health <= 0)
         {
             isDeath = true;
-            
-            foreach (var c in attacker.onDeathEv)
+
+            foreach (var c in onDeathEv)
             {
                 c.Invoke(ctx);
             }
+
         }
+
+        
     }
 }

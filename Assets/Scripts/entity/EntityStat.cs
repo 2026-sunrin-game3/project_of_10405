@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-
 public enum MathType
 {
     Increase,
@@ -10,39 +7,42 @@ public enum MathType
     Add,
     Remove
 }
-
 public class EntityStat : MonoBehaviour
 {
-    //공격력,방어력,피증,치확,치피,받피증,공속,이속
     Dictionary<string, float> baseValue = new();
+
     Dictionary<string, float> resultValue = new();
 
     public List<Buf> bufs = new();
-
     public struct Buf
     {
         public string Key;
-        public MathType mathtype;
-        public float Value;       
+
+        public MathType mathType;
+
+        public float Value;
     }
-    [Serializable]
-    public struct StatValue
+    [System.Serializable]
+    struct StatValue
     {
         public string Key;
         public float Value;
     }
+
     [SerializeField]
     List<StatValue> defaultStat = new()
     {
         new StatValue{Key="attackDamage", Value=3},
-        new StatValue{Key="defense", Value=0},
+        new StatValue{Key="defense", Value = 0},
         new StatValue{Key="increaseDamage", Value=0},
-        new StatValue{Key="critPer", Value=30},
+        new StatValue{Key="critPer", Value=3},
         new StatValue{Key="critMul", Value=0},
         new StatValue{Key="hurtDamage", Value=0},
         new StatValue{Key="atkSpeed", Value=0},
         new StatValue{Key="moveSpeed", Value=0}
     };
+   
+    // 공겨격, 방어력, 가하는 피해 증가, 치명타 확률 / 피해, 받는 피해 증가, 공격 속도, 이동 속도
     void Start()
     {
         foreach (StatValue val in defaultStat)
@@ -51,19 +51,23 @@ public class EntityStat : MonoBehaviour
             Calc(val.Key);
         }
     }
-    public float GetResultValue(string key)
-    {
-        return resultValue[key];
-    }
 
-    public float Calc(string key)
+    public float GetResultValue(string Key)
     {
-        float value = baseValue[key];
-        float increase = 100;
+        return resultValue[Key];
+    }
+    public float GetBaseValue(string Key)
+    {
+        return baseValue[Key];
+    }
+    public float Calc(string Key)
+    {
+        float value = baseValue[Key];
+        float increase = 120;
 
         foreach (Buf buf in bufs)
         {
-            switch (buf.mathtype)
+            switch (buf.mathType)
             {
                 case MathType.Increase:
                     increase += buf.Value;
@@ -78,7 +82,12 @@ public class EntityStat : MonoBehaviour
                     increase -= buf.Value;
                     break;
             }
+
         }
-        return resultValue[key] = value * increase * 0.01f;
+
+        return resultValue[Key] = value + increase * 0.01f;
     }
+        
+
+
 }
