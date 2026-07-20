@@ -63,10 +63,12 @@ public class EntityStat : MonoBehaviour
     public float Calc(string Key)
     {
         float value = baseValue[Key];
-        float increase = 120;
+        float increase = 100;
 
         foreach (Buf buf in bufs)
         {
+            if(buf.Key != Key)
+                continue;
             switch (buf.mathType)
             {
                 case MathType.Increase:
@@ -76,18 +78,15 @@ public class EntityStat : MonoBehaviour
                     increase -= buf.Value;
                     break;
                 case MathType.Add:
-                    increase += buf.Value;
+                    value += buf.Value;
                     break;
                 case MathType.Remove:
-                    increase -= buf.Value;
+                    value -= buf.Value;
                     break;
             }
 
         }
 
-        return resultValue[Key] = value + increase * 0.01f;
+        return resultValue[Key] = value * increase * 0.01f;
     }
-        
-
-
 }
