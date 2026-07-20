@@ -1550,7 +1550,7 @@ MonoBehaviour:
   - Key: atkSpeed
     Value: 0
   - Key: moveSpeed
-    Value: 0
+    Value: 2
 --- !u!114 &2061573731
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1567,21 +1567,37 @@ MonoBehaviour:
   stat: {fileID: 0}
   rigid: {fileID: 0}
   direction: 0
-  atkCool: 0.5
   groundMask_:
     serializedVersion: 2
     m_Bits: 128
   groundDist_: 0.5
+  atkCool: 0.5
   enemyMask:
     serializedVersion: 2
     m_Bits: 8
   indicator: {fileID: 327256952765958820, guid: 408e8020da64f814eb2e3db8ffc1dc7b, type: 3}
   player: {fileID: 77640404}
+  attackDist: 1.5
   defaultAttack:
     offset: {x: 0, y: 0.25}
     size: {x: 3, y: 2}
     drawGizmos: 1
-  attackDist: 1.5
+  dashRange: 5
+  dashPower: 12
+  dashDuration: 0.4
+  dashCoolTime: 3
+  dashAttack:
+    offset: {x: 0, y: 0}
+    size: {x: 0, y: 0}
+    drawGizmos: 0
+  jumpPower: 7
+  fallSpeed: 25
+  jumpCoolTime: 6
+  jumpAttack:
+    offset: {x: 0, y: 0}
+    size: {x: 0, y: 0}
+    drawGizmos: 0
+  retreatTime: 0.6
 --- !u!1001 &7230684786228555288
 PrefabInstance:
   m_ObjectHideFlags: 0
