@@ -11,14 +11,17 @@ public abstract class Enemy : MonoBehaviour
     public float atkCool;
     [SerializeField] LayerMask enemyMask;
     [SerializeField] DamageIndicator indicator;
+    [SerializeField] protected AttackIndicator attackindicator;
     void Start()
     {
         health = GetComponent<EntityHealth>();
         stat = GetComponent<EntityStat>();
         rigid = GetComponent<Rigidbody2D>();
+        attackindicator = GetComponent<AttackIndicator>();
 
         health.OnDamage(OnHurt);
         health.OnDeath(OnDeath);
+        MobStart();
     }
 
     void OnDeath(EntityHealth.Context ctx)
@@ -39,6 +42,7 @@ public abstract class Enemy : MonoBehaviour
         MobUpdate();
     }
     protected virtual void MobUpdate(){}
+    protected virtual void MobStart(){}
 
     public void Chase(Transform target)
     {

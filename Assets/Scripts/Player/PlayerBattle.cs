@@ -1,6 +1,7 @@
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 [System.Serializable]
 public struct AttackRange
@@ -22,6 +23,7 @@ public class PlayerBattle : MonoBehaviour
     [SerializeField] LayerMask enemyMask;
     [SerializeField] float dashPower, dashTime;
     public bool inDash;
+    [SerializeField] Slider healthbar;
     void Start()
     {
         health = GetComponent<EntityHealth>();
@@ -46,6 +48,7 @@ public class PlayerBattle : MonoBehaviour
     }
     void Update()
     {
+        healthbar.value = health.health / health.maxHealth;
         if (atkCool > 0)
             atkCool -= Time.deltaTime * (1 + stat.GetResultValue("atkSpeed") / 100);
         if (dashCool > 0)
