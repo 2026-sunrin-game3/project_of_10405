@@ -2390,7 +2390,6 @@ GameObject:
   - component: {fileID: 1433478516}
   - component: {fileID: 1433478522}
   - component: {fileID: 1433478523}
-  - component: {fileID: 1433478524}
   m_Layer: 6
   m_Name: Binah
   m_TagString: Untagged
@@ -2629,21 +2628,6 @@ MonoBehaviour:
   indicator: {fileID: 327256952765958820, guid: 408e8020da64f814eb2e3db8ffc1dc7b, type: 3}
   attackindicator: {fileID: 0}
   bossbar: {fileID: 1872425912}
---- !u!114 &1433478524
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1433478514}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8318e84315f3c9243a03350f5f7fef46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DamageIndicator
-  text: {fileID: 0}
-  time: 0
-  floatingScale: 0
 --- !u!1 &1539946255
 GameObject:
   m_ObjectHideFlags: 0
