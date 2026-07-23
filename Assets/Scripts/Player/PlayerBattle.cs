@@ -1,5 +1,5 @@
 using System.Collections;
-using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,16 +14,20 @@ public class PlayerBattle : MonoBehaviour
     public EntityHealth health;
     public EntityStat stat;
     public PlayerMovement movement;
-    public float atkCool, dashCool, skill1Cool;
+    public float atkCool, dashCool, skill1Cool, skill2Cool, skill3Cool;
     [SerializeField] DamageIndicator indicator;
 
     
     public PlayerAnimator animator;
     public AttackRange defaultAttack;
+    public AttackRange superAttack;
     [SerializeField] LayerMask enemyMask;
     [SerializeField] float dashPower, dashTime;
     public bool inDash;
     [SerializeField] Slider healthbar;
+    public GameObject bull;
+    public GameObject ex;
+    public GameObject sh;
     void Start()
     {
         health = GetComponent<EntityHealth>();
@@ -32,7 +36,9 @@ public class PlayerBattle : MonoBehaviour
         movement = GetComponent<PlayerMovement>();
 
         health.OnDamage(OnHurt);
+        health.OnDeath(OnDeath);
     }
+
 
     void OnHurt(EntityHealth.Context ctx)
     {
@@ -50,12 +56,17 @@ public class PlayerBattle : MonoBehaviour
     {
         healthbar.value = health.health / health.maxHealth;
         if (atkCool > 0)
-            atkCool -= Time.deltaTime * (1 + stat.GetResultValue("atkSpeed") / 100);
+            atkCool -= Time.deltaTime * (1 + stat.GetResultValue("atkSpeed") / 100) * 2f;
         if (dashCool > 0)
-            dashCool -= Time.deltaTime * 2;
+            dashCool -= Time.deltaTime * 2.5f;
         if (skill1Cool > 0)
-            skill1Cool -= Time.deltaTime;     
+            skill1Cool -= Time.deltaTime;
+        if (skill2Cool > 0)
+            skill2Cool -= Time.deltaTime;     
+        if (skill3Cool > 0)
+            skill3Cool -= Time.deltaTime;     
         defaultAttack.offset.x = animator.direction * 2;
+        superAttack.offset.x = animator.direction;
         
     }
     public void Dash(int direction)
@@ -82,6 +93,23 @@ public class PlayerBattle : MonoBehaviour
             return;
         atkCool = 1f;
         animator.Play("Attack1");
+        Instantiate(bull, transform.position + new Vector3(0,0.65f,0), Quaternion.identity);
+        GameObject b1 = Instantiate(bull, transform.position + new Vector3(0,0.65f,0), Quaternion.identity);
+        Bullet b1c = b1.GetComponent<Bullet>();
+        b1c.y = 1.25f;
+        b1c.x = animator.direction;
+        GameObject b2 = Instantiate(bull, transform.position + new Vector3(0,0.65f,0), Quaternion.identity);
+        Bullet b2c = b2.GetComponent<Bullet>();
+        b2c.y = -1.25f;
+        b2c.x = animator.direction;
+        GameObject b3 = Instantiate(bull, transform.position + new Vector3(0,0.65f,0), Quaternion.identity);
+        Bullet b3c = b3.GetComponent<Bullet>();
+        b3c.y = 2.5f;
+        b3c.x = animator.direction;
+        GameObject b4 = Instantiate(bull, transform.position + new Vector3(0,0.65f,0), Quaternion.identity);
+        Bullet b4c = b4.GetComponent<Bullet>();
+        b4c.y = -2.5f;
+        b4c.x = animator.direction;
         var col = Physics2D.OverlapBoxAll((Vector2)transform.position + defaultAttack.offset, defaultAttack.size, 0, enemyMask);
 
         foreach (var target in col)
@@ -98,35 +126,26 @@ public class PlayerBattle : MonoBehaviour
     {
         if (skill1Cool > 0)
             return;
-        skill1Cool = 12f;
-        StartCoroutine(skill1_());
+        skill1Cool = 6f;
+        movement.SetVelocity(Vector2.up * 8f);
     }
 
-    IEnumerator skill1_()
+    public void Skill2()
     {
-        var atkBuf = new EntityStat.Buf
+        if (skill2Cool > 0)
+            return;
+        skill2Cool = 12f;
+        StartCoroutine(skill2_());
+    }
+
+    IEnumerator skill2_()
+    {
+        var hurtdamageBuf = new EntityStat.Buf
         {
-            Key = "attackDamage",
-            mathType = MathType.Increase,
+            Key = "hurtDamage",
+            mathType = MathType.Remove,
             Value = 50
         };
-        var atkspeedBuf = new EntityStat.Buf
-        {
-            Key = "atkSpeed",
-            mathType = MathType.Add,
-            Value = 200
-        };
-        stat.bufs.Add(atkBuf);
-        stat.bufs.Add(atkspeedBuf);
-        stat.Calc("attackDamage");
-        stat.Calc("atkSpeed");
-
-        yield return new WaitForSeconds(5);
-
-        stat.bufs.Remove(atkBuf);
-        stat.bufs.Remove(atkspeedBuf);
-        stat.Calc("attackDamage");
-        stat.Calc("atkSpeed");
 
         var speedBuf = new EntityStat.Buf
         {
@@ -135,13 +154,40 @@ public class PlayerBattle : MonoBehaviour
             Value = 50
         };
 
+        sh.SetActive(true);
+        stat.bufs.Add(hurtdamageBuf);
+        stat.Calc("hurtDamage");
         stat.bufs.Add(speedBuf);
         stat.Calc("moveSpeed");
 
         yield return new WaitForSeconds(3);
 
+        sh.SetActive(false);
+        stat.bufs.Remove(hurtdamageBuf);
+        stat.Calc("hurtDamage");
         stat.bufs.Remove(speedBuf);
         stat.Calc("moveSpeed");       
+    }
+
+    public void Skill3()
+    {
+        if (skill3Cool > 0)
+            return;
+        skill3Cool = 6f;
+        animator.Play("Attack1");
+        GameObject e1 = Instantiate(ex, transform.position + new Vector3(1,0.65f,0), Quaternion.identity);
+        Explode e1c = e1.GetComponent<Explode>();
+        e1c.si = 0.25f; e1c.time = 0.1f;
+        var col = Physics2D.OverlapBoxAll((Vector2)transform.position + superAttack.offset, superAttack.size, 0, enemyMask);
+
+        foreach (var target in col)
+        {
+            EntityHealth hp = target.GetComponent<EntityHealth>();
+            if (hp != null)
+            {
+                hp.GetDamage(stat.GetResultValue("attackDamage") * 2f, health);
+            }
+        }
     }
     
     void Draw(AttackRange range) 
@@ -155,5 +201,10 @@ public class PlayerBattle : MonoBehaviour
     void OnDrawGizmos() 
     {
         Draw(defaultAttack);
+        Draw(superAttack);
+    }
+    void OnDeath(EntityHealth.Context ctx)
+    {
+        SceneManager.LoadScene("Die");
     }
 }

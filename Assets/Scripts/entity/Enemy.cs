@@ -1,7 +1,11 @@
+using System;
+using System.Collections;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public abstract class Enemy : MonoBehaviour
 {
+    public Transform player;
+    public EntityHealth plhealth;
     public EntityHealth health;
     public EntityStat stat;
     public Rigidbody2D rigid;
@@ -10,7 +14,7 @@ public abstract class Enemy : MonoBehaviour
     [SerializeField] float groundDist_ = 0.5f;
     public float atkCool;
     [SerializeField] LayerMask enemyMask;
-    [SerializeField] DamageIndicator indicator;
+    [SerializeField] protected DamageIndicator indicator;
     [SerializeField] protected AttackIndicator attackindicator;
     void Start()
     {
@@ -19,20 +23,15 @@ public abstract class Enemy : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         attackindicator = GetComponent<AttackIndicator>();
 
-        health.OnDamage(OnHurt);
         health.OnDeath(OnDeath);
         MobStart();
     }
 
-    void OnDeath(EntityHealth.Context ctx)
+    protected virtual void OnDeath(EntityHealth.Context ctx)
     {
         Destroy(gameObject);
     }
 
-    void OnHurt(EntityHealth.Context ctx)
-    {
-        indicator.IndicateDamage(ctx.damage, transform.position + new Vector3(Random.Range(-0.3f, 0.3f), 1), Color.orange);
-    }
 
     void Update()
     {
@@ -65,7 +64,7 @@ public abstract class Enemy : MonoBehaviour
         rigid.linearVelocity = dir;
     }
 
-    public void Attack(float cool, AttackRange range, Vector2 center)
+    public void Attack(float cool, AttackRange range, Vector2 center, float damage_mul = 1f)
     {
         if (atkCool > 0)
             return;
@@ -82,7 +81,7 @@ public abstract class Enemy : MonoBehaviour
             EntityHealth hp = target.GetComponent<EntityHealth>();
             if (hp != null)
             {
-                hp.GetDamage(stat.GetResultValue("attackDamage"), health);
+                hp.GetDamage(stat.GetResultValue("attackDamage") * damage_mul, health);
             }
         }
     }

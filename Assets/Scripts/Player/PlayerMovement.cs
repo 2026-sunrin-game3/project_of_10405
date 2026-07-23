@@ -29,7 +29,7 @@ public class PlayerMovement : MonoBehaviour
     public bool Onground()
     {
         Vector2 center = transform.position + Vector3.down * groundDist_ * 0.5f;
-        Vector2 size = new Vector3(0.3f, groundDist_);
+        Vector2 size = new Vector3(0.75f, groundDist_);
         Collider2D[] cast = Physics2D.OverlapBoxAll(center, size, 0f, groundMask_);
 
         return cast.Length > 0;

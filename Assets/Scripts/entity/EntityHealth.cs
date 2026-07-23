@@ -45,7 +45,6 @@ public class EntityHealth : MonoBehaviour
     void Start()
     {
         stat = GetComponent<EntityStat>();
-        ResetHealth();
     }
     public void GetDamage(float damage, EntityHealth attacker = null)
     {
@@ -55,12 +54,7 @@ public class EntityHealth : MonoBehaviour
         ctx.damage = damage;
         ctx.attacker = attacker;
 
-        float critPer = 0, critMul = 0, inc = 0;
-
-        foreach (var c in onDamageEv)
-        {
-            c.Invoke(ctx);
-        }
+        float critPer=0, critMul=0, inc=0;
 
         if (attacker != null)
         {
@@ -73,10 +67,6 @@ public class EntityHealth : MonoBehaviour
             }
         }
 
-        if (ctx.canceled)
-        {
-            return;
-        }
 
         float dmg = ctx.damage * (1 + stat.GetResultValue("hurtDamage")/100) * (1+ inc/100);
 
@@ -85,6 +75,20 @@ public class EntityHealth : MonoBehaviour
         dmg -= stat.GetResultValue("defense");
         if (dmg < 0)
             dmg = 0;
+        
+        ctx.damage = dmg;
+
+        foreach (var c in onDamageEv)
+        {
+            c.Invoke(ctx);
+        }
+
+
+        if (ctx.canceled)
+        {
+            return;
+        }
+
         health -= dmg;
 
         if (health <= 0)

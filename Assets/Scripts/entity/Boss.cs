@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class Boss : Enemy
 {
     [SerializeField]
-    PlayerController player;
+    PlayerController player_;
     public float attackDist = 1.5f;
     [SerializeField] AttackRange defaultAttack;
 
@@ -27,20 +27,25 @@ public class Boss : Enemy
     float retreatTimer;
 
     bool inPattern;
-    [SerializeField] Slider bossbar;
 
+    protected override void MobStart()
+    {
+        health.OnDamage(OnHurt);
+    }
     // 수정됨: 부모 클래스의 Awake()를 덮어쓰지 않도록 override와 base.Awake() 추가
     protected void Awake()
     { 
-
         // 스폰하자마자 패턴이 터지지 않도록 쿨타임을 채워둔 채로 시작
         dashCool = dashCoolTime;
         jumpCool = jumpCoolTime;
     }
+    void OnHurt(EntityHealth.Context ctx)
+    {
+        indicator.IndicateDamage(ctx.damage, transform.position + new Vector3(Random.Range(-0.3f, 0.3f), 1), Color.orange);
+    }
 
     protected override void MobUpdate()
     {
-        bossbar.value = health.health / health.maxHealth;
         if (dashCool > 0)
             dashCool -= Time.deltaTime;
         if (jumpCool > 0)
@@ -51,12 +56,12 @@ public class Boss : Enemy
         if (inPattern)
             return;
 
-        float dist = Vector2.Distance(player.transform.position, transform.position);
+        float dist = Vector2.Distance(player_.transform.position, transform.position);
 
         if (retreatTimer > 0)
         {
             // 붙었다 빠지기: 때리고 나서 잠깐 반대 방향으로 물러남
-            float away = player.transform.position.x > transform.position.x ? -1 : 1;
+            float away = player_.transform.position.x > transform.position.x ? -1 : 1;
             Move(Vector2.right * away);
             return;
         }
@@ -82,18 +87,18 @@ public class Boss : Enemy
         }
         else
         {
-            Chase(player.transform);
+            Chase(player_.transform);
         }
     }
 
     IEnumerator DashAttackPattern()
     {
         inPattern = true;
-        direction = player.transform.position.x > transform.position.x ? 1 : -1;
+        direction = player_.transform.position.x > transform.position.x ? 1 : -1;
         SetVelocity(Vector2.right * direction * dashPower);
 
         float t = 0f;
-        while (t < dashDuration && Mathf.Abs(player.transform.position.x - transform.position.x) > attackDist)
+        while (t < dashDuration && Mathf.Abs(player_.transform.position.x - transform.position.x) > attackDist)
         {
             t += Time.deltaTime;
             yield return null;
@@ -119,9 +124,9 @@ public class Boss : Enemy
         {
             timeout -= Time.deltaTime;
 
-            if (Mathf.Abs(player.transform.position.x - transform.position.x) > attackDist)
+            if (Mathf.Abs(player_.transform.position.x - transform.position.x) > attackDist)
             {
-                direction = player.transform.position.x > transform.position.x ? 1 : -1;
+                direction = player_.transform.position.x > transform.position.x ? 1 : -1;
                 Move(Vector2.right * direction);
             }
 

@@ -39,4 +39,12 @@ public class PlayerInput : MonoBehaviour
     {
         battle.Skill1();
     }
+    public void OnSkill2()
+    {
+        battle.Skill2();
+    }
+    public void OnSkill3()
+    {
+        battle.Skill3();
+    }
 }
