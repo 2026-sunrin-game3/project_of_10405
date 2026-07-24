@@ -193,7 +193,7 @@ public class Binah : Enemy
         
         while(time > 0)
         {
-            player.transform.position = savePos; 
+            player.transform.position = new Vector3(savePos.x,player.transform.position.y,player.transform.position.z); 
             Move(new Vector2(1, 0));
             
             time -= Time.deltaTime;

@@ -1757,7 +1757,7 @@ Transform:
   m_GameObject: {fileID: 612572900}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -9.5, y: 0, z: 0}
+  m_LocalPosition: {x: -10, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 10, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4043,7 +4043,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LoadHealth
   plh: {fileID: 77640412}
   bo: {fileID: 1433478519}
-  b: {fileID: 1872425912}
   pl: {fileID: 77640411}
 --- !u!4 &1814742234
 Transform:
@@ -4671,7 +4670,7 @@ MonoBehaviour:
     m_Bits: 8
   indicator: {fileID: 327256952765958820, guid: 408e8020da64f814eb2e3db8ffc1dc7b, type: 3}
   attackindicator: {fileID: 0}
-  player: {fileID: 77640404}
+  player_: {fileID: 0}
   attackDist: 1.5
   defaultAttack:
     offset: {x: 0, y: 0.25}

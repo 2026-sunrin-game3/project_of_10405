@@ -93,20 +93,22 @@ public class PlayerBattle : MonoBehaviour
             return;
         atkCool = 1f;
         animator.Play("Attack1");
-        Instantiate(bull, transform.position + new Vector3(0,0.65f,0), Quaternion.identity);
-        GameObject b1 = Instantiate(bull, transform.position + new Vector3(0,0.65f,0), Quaternion.identity);
+        GameObject b = Instantiate(bull, transform.position + new Vector3(0,0.65f,0), Quaternion.identity);
+        Bullet bc = b.GetComponent<Bullet>();
+        bc.x = animator.direction;
+        GameObject b1 = Instantiate(bull, transform.position + new Vector3(0,0.8f,0), Quaternion.identity);
         Bullet b1c = b1.GetComponent<Bullet>();
         b1c.y = 1.25f;
         b1c.x = animator.direction;
-        GameObject b2 = Instantiate(bull, transform.position + new Vector3(0,0.65f,0), Quaternion.identity);
+        GameObject b2 = Instantiate(bull, transform.position + new Vector3(0,0.5f,0), Quaternion.identity);
         Bullet b2c = b2.GetComponent<Bullet>();
         b2c.y = -1.25f;
         b2c.x = animator.direction;
-        GameObject b3 = Instantiate(bull, transform.position + new Vector3(0,0.65f,0), Quaternion.identity);
+        GameObject b3 = Instantiate(bull, transform.position + new Vector3(0,0.95f,0), Quaternion.identity);
         Bullet b3c = b3.GetComponent<Bullet>();
         b3c.y = 2.5f;
         b3c.x = animator.direction;
-        GameObject b4 = Instantiate(bull, transform.position + new Vector3(0,0.65f,0), Quaternion.identity);
+        GameObject b4 = Instantiate(bull, transform.position + new Vector3(0,0.35f,0), Quaternion.identity);
         Bullet b4c = b4.GetComponent<Bullet>();
         b4c.y = -2.5f;
         b4c.x = animator.direction;
@@ -175,6 +177,11 @@ public class PlayerBattle : MonoBehaviour
             return;
         skill3Cool = 6f;
         animator.Play("Attack1");
+        StartCoroutine(Skill3_());
+    }
+    IEnumerator Skill3_()
+    {
+        animator.Play("Attack1");
         GameObject e1 = Instantiate(ex, transform.position + new Vector3(1,0.65f,0), Quaternion.identity);
         Explode e1c = e1.GetComponent<Explode>();
         e1c.si = 0.25f; e1c.time = 0.1f;
@@ -188,6 +195,9 @@ public class PlayerBattle : MonoBehaviour
                 hp.GetDamage(stat.GetResultValue("attackDamage") * 2f, health);
             }
         }
+        movement.SetVelocity(new Vector2(animator.direction * -1,0) * 30f);
+        yield return new WaitForSeconds(0.05f);
+        movement.SetVelocity(Vector2.zero);
     }
     
     void Draw(AttackRange range) 
